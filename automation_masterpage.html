@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<base target="_top">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+</head>
+
+<body>
+
+  <div class="container"> 
+
+    <div class="row">
+
+      <div id="allTables">
+
+    </div>
+
+    </div>
+
+  </div>
+	
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+<script>
+
+
+document.addEventListener("DOMContentLoaded",function(){
+
+  function fetchAndGenerateTables(sheetNames, index) {
+    if (index >= sheetNames.length) {
+      // All sheets processed, exit recursion
+      return;
+    }
+
+    var sheetName = sheetNames[index];
+
+    google.script.run.withSuccessHandler(function (rarray) {
+      displayTableName(sheetName);
+      if (rarray.length != 1) {
+        generateTable(rarray);
+      } else {
+        showNoRecords();
+      }
+      // Fetch and generate tables for the next sheet
+      fetchAndGenerateTables(sheetNames, index + 1);
+    }).getData(sheetName, 1);
+  }
+
+  google.script.run.withSuccessHandler(function (allS) {
+    fetchAndGenerateTables(allS, 0);
+  }).getSheetNames();
+
+});
+
+
+
+function displayTableName(sheetName){
+  var tname = document.createElement('h4');
+  tname.textContent = sheetName;
+  document.getElementById('allTables').appendChild(tname);
+}
+
+
+function generateTable(sheetData){
+  // Create the necessary HTML elements
+  var container = document.createElement('div');
+  container.className = 'card-panel valign-wrapper';
+  var tableWrapper = document.createElement('div');
+  tableWrapper.className = 'col s12';
+  var table = document.createElement('table');
+  table.className = 'striped';
+  var thead = document.createElement('thead');
+  var tbody = document.createElement('tbody');
+
+  // Add table header row
+  var headerRow = document.createElement('tr');
+  for (var i = 0; i < sheetData[0].length; i++) {
+    var th = document.createElement('th');
+    th.textContent = sheetData[0][i];
+    headerRow.appendChild(th);
+  }
+  thead.appendChild(headerRow);
+
+  // Add table body rows
+  for (var m = 1; m < sheetData.length; m++) {
+    var dataRow = document.createElement('tr');
+    for (var n = 0; n < sheetData[m].length; n++) {
+      var td = document.createElement('td');
+      td.textContent = sheetData[m][n];
+      dataRow.appendChild(td);
+    }
+    tbody.appendChild(dataRow);
+  }
+
+  // Assemble the HTML structure
+  table.appendChild(thead);
+  table.appendChild(tbody);
+  tableWrapper.appendChild(table);
+  container.appendChild(tableWrapper);
+
+  // Append the table to the desired element in the document
+  var allTablesElement = document.getElementById('allTables');
+  allTablesElement.appendChild(container);
+}
+
+
+function showNoRecords(){
+
+  var container = document.createElement('div');
+  container.className = 'card-panel valign-wrapper';
+
+  var para = document.createElement('p');
+  para.textContent = "Seems like there are no records.";
+  
+  container.appendChild(para);
+
+  var allTablesElement = document.getElementById('allTables');
+  allTablesElement.appendChild(container);
+
+}
+
+
+</script>
+
+</body>
+
+</html>
+
