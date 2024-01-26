@@ -1,7 +1,7 @@
 var sheetName = "logdata"; // Replace "logdata" with the name of the sheet in which you want to log all the data user submitted
 var sheetId = "161JFJiKLk5HDWLaT5DgvQIRtc0IpRvtPltOtLN5HSgE"; // Replace with ID of above sheet which you can obtain in the URL of the spreadsheet 
   
- /* ========== DO NOT EDIT IN THIS FUNCTION BELOW THIS LINE ========== */
+ /* ========== DO NOT EDIT THIS BELOW THIS LINE ========== */
 
 function doGet(e){ 
 
